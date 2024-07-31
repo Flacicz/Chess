@@ -13,7 +13,7 @@ set(PROJECT_NAME Chess)
 project (${PROJECT_NAME})
 
 # Добавьте источник в исполняемый файл этого проекта.
-add_executable (${PROJECT_NAME} "Chess.cpp" "Chess.h")
+add_executable (${PROJECT_NAME} "src/Chess.cpp" "headers/Chess.h")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
