@@ -3,6 +3,12 @@
 
 #include <iostream>
 
+static const GLfloat g_vertex_buffer_data[] = {
+   -1.0f, -1.0f, 0.0f,
+   1.0f, -1.0f, 0.0f,
+   0.0f,  1.0f, 0.0f,
+};
+
 int main(void)
 {
     /* Initialize the library */
@@ -18,6 +24,10 @@ int main(void)
         return -1;
     }
 
+    //GLuint VertexArrayID;
+    //glGenVertexArrays(1, &VertexArrayID);
+    //glBindVertexArray(VertexArrayID);
+
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
@@ -25,15 +35,29 @@ int main(void)
         std::cout << "Can't load GLAD" << std::endl;
     }
 
-    std::cout << GLVersion.major << "." << GLVersion.minor << std::endl;
+    std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
-    glClearColor(0, 1, 0, 1);
+    GLuint vertexBuffer;
+    glGenBuffers(1, &vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-        /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
+        glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+        glVertexAttribPointer(
+            0,                  // Атрибут 0. Подробнее об этом будет рассказано в части, посвященной шейдерам.
+            3,                  // Размер
+            GL_FLOAT,           // Тип
+            GL_FALSE,           // Указывает, что значения не нормализованы
+            0,                  // Шаг
+            (void*)0            // Смещение массива в буфере
+        );
+
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDisableVertexAttribArray(0);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
