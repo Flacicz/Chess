@@ -3,11 +3,29 @@
 
 #include <iostream>
 
-static const GLfloat g_vertex_buffer_data[] = {
-   -1.0f, -1.0f, 0.0f,
-   1.0f, -1.0f, 0.0f,
-   0.0f,  1.0f, 0.0f,
+#include "Render/headers/ShaderProgram.h"
+
+GLfloat points[] = {
+     0.0f,  0.5f, 0.0f,
+     0.5f, -0.5f, 0.0f,
+    -0.5f, -0.5f, 0.0f
 };
+
+GLfloat colors[] = {
+    1.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 1.0f,
+};
+
+int g_windowSizeX = 640;
+int g_windowSizeY = 480;
+
+static void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
+{
+    g_windowSizeX = width;
+    g_windowSizeY = height;
+    glViewport(0, 0, g_windowSizeX, g_windowSizeY);
+}
 
 int main(void)
 {
@@ -15,8 +33,12 @@ int main(void)
     if (!glfwInit())
         return -1;
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     /* Create a windowed mode window and its OpenGL context */
-    GLFWwindow* window = glfwCreateWindow(640, 480, "Chess", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(g_windowSizeX, g_windowSizeY, "Chess", nullptr, nullptr);
     if (!window)
     {
         std::cout << "Can't create window" << std::endl;
@@ -24,9 +46,7 @@ int main(void)
         return -1;
     }
 
-    //GLuint VertexArrayID;
-    //glGenVertexArrays(1, &VertexArrayID);
-    //glBindVertexArray(VertexArrayID);
+    glfwSetWindowSizeCallback(window, glfwWindowSizeCallback);
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
@@ -37,27 +57,38 @@ int main(void)
 
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
-    GLuint vertexBuffer;
-    glGenBuffers(1, &vertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+    ShaderProgram program{};
+
+    GLuint points_vbo = 0;
+    glGenBuffers(1, &points_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+
+    GLuint colors_vbo = 0;
+    glGenBuffers(1, &colors_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+
+    GLuint vao = 0;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glVertexAttribPointer(
-            0,                  // Атрибут 0. Подробнее об этом будет рассказано в части, посвященной шейдерам.
-            3,                  // Размер
-            GL_FLOAT,           // Тип
-            GL_FALSE,           // Указывает, что значения не нормализованы
-            0,                  // Шаг
-            (void*)0            // Смещение массива в буфере
-        );
+        glClear(GL_COLOR_BUFFER_BIT);
 
+        program.useProgram();
+        glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDisableVertexAttribArray(0);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
