@@ -14,7 +14,13 @@ public:
 		void printPoint() const { std::cout << x << " " << y << std::endl; };
 	};
 
+	class Fragment {
+	public:
+		float r, g, b;
+	};
+
 	std::string getShaderCode(const char* path);
 	std::vector<Vertex> getPoints(unsigned int squares, unsigned int width);
 	void printPoints(std::vector<Vertex> points) const;
+	std::vector<Fragment> getColors();
 };

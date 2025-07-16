@@ -15,7 +15,6 @@ std::string ChessHelper::getShaderCode(const char* path) {
 
 std::vector<ChessHelper::Vertex> ChessHelper::getPoints(unsigned int squares, unsigned int width) {
 	std::vector<Vertex> points;
-	std::vector<float> points2;
 	float interval = 0.25f;
 
 	float startX, startY;
@@ -47,4 +46,40 @@ void ChessHelper::printPoints(std::vector<ChessHelper::Vertex> points) const {
 	for (auto& point : points) {
 		point.printPoint();
 	}
+}
+
+std::vector<ChessHelper::Fragment> ChessHelper::getColors() {
+	std::vector<ChessHelper::Fragment> colors;
+	bool alternation = true;
+	Fragment green = { 0.0f,0.39f,0.0f };
+	Fragment white = { 0.8f,0.8f,0.8f };
+
+	for (int i = 0; i < 64; i++) {
+		if (i % 8 == 0) alternation = !alternation;
+
+		switch (alternation) {
+		case true:
+			colors.push_back(green);
+			colors.push_back(green);
+			colors.push_back(green);
+			colors.push_back(green);
+			colors.push_back(green);
+			colors.push_back(green);
+
+			alternation = false;
+			break;
+		case false:
+			colors.push_back(white);
+			colors.push_back(white);
+			colors.push_back(white);
+			colors.push_back(white);
+			colors.push_back(white);
+			colors.push_back(white);
+
+			alternation = true;
+			break;
+		}
+	}
+
+	return colors;
 }

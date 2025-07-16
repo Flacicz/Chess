@@ -6,25 +6,6 @@
 #include "Render/headers/ShaderProgram.h"
 #include "Render/headers/VertexArray.h"
 
-//GLfloat points[] = {
-//     0.0f,  0.0f,
-//     0.0f,  1.0f,
-//     1.0f,  0.0f,
-//
-//     1.0f,  1.0f,
-//     0.0f,  1.0f,
-//     1.0f,  0.0f,
-//};
-
-GLfloat colors[] = { 
-    0.0f, 1.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-
-    0.0f, 1.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-};
 
 int g_windowSizeX = 1000;
 int g_windowSizeY = 1000;
@@ -64,7 +45,7 @@ int main(void)
 
     ChessHelper helper{};
     std::vector<ChessHelper::Vertex> points = helper.getPoints(8, g_windowSizeX);
-    helper.printPoints(points);
+    std::vector<ChessHelper::Fragment> colors = helper.getColors();
 
     ShaderProgram program{};
 
@@ -73,10 +54,10 @@ int main(void)
     glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
     glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(ChessHelper::Vertex), points.data(), GL_STATIC_DRAW);
 
-    /*GLuint colors_vbo = 0;
+    GLuint colors_vbo = 0;
     glGenBuffers(1, &colors_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);*/
+    glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(ChessHelper::Fragment), colors.data(), GL_STATIC_DRAW);
 
     GLuint vao = 0;
     glGenVertexArrays(1, &vao);
@@ -86,9 +67,9 @@ int main(void)
     glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
-    /*glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);*/
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
     
 
     /* Loop until the user closes the window */
