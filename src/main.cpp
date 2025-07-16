@@ -4,21 +4,30 @@
 #include <iostream>
 
 #include "Render/headers/ShaderProgram.h"
+#include "Render/headers/VertexArray.h"
 
-GLfloat points[] = {
-     0.0f,  0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-    -0.5f, -0.5f, 0.0f
-};
+//GLfloat points[] = {
+//     0.0f,  0.0f,
+//     0.0f,  1.0f,
+//     1.0f,  0.0f,
+//
+//     1.0f,  1.0f,
+//     0.0f,  1.0f,
+//     1.0f,  0.0f,
+//};
 
-GLfloat colors[] = {
-    1.0f, 0.0f, 0.0f,
+GLfloat colors[] = { 
     0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 1.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+
+    0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
 };
 
-int g_windowSizeX = 640;
-int g_windowSizeY = 480;
+int g_windowSizeX = 1000;
+int g_windowSizeY = 1000;
 
 static void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
 {
@@ -32,10 +41,6 @@ int main(void)
     /* Initialize the library */
     if (!glfwInit())
         return -1;
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
     GLFWwindow* window = glfwCreateWindow(g_windowSizeX, g_windowSizeY, "Chess", nullptr, nullptr);
@@ -57,17 +62,21 @@ int main(void)
 
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
+    ChessHelper helper{};
+    std::vector<ChessHelper::Vertex> points = helper.getPoints(8, g_windowSizeX);
+    helper.printPoints(points);
+
     ShaderProgram program{};
 
     GLuint points_vbo = 0;
     glGenBuffers(1, &points_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(ChessHelper::Vertex), points.data(), GL_STATIC_DRAW);
 
-    GLuint colors_vbo = 0;
+    /*GLuint colors_vbo = 0;
     glGenBuffers(1, &colors_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);*/
 
     GLuint vao = 0;
     glGenVertexArrays(1, &vao);
@@ -75,11 +84,12 @@ int main(void)
 
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
-    glEnableVertexAttribArray(1);
+    /*glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);*/
+    
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -88,7 +98,7 @@ int main(void)
 
         program.useProgram();
         glBindVertexArray(vao);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, points.size());
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

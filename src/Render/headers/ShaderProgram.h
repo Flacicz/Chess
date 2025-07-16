@@ -5,7 +5,7 @@
 #include <string>
 #include <iostream>
 
-#include "../../Helper/headers/getShader.h"
+#include "../../Helper/headers/chessHelper.h"
 
 class ShaderProgram {
 private:

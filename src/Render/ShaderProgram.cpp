@@ -1,7 +1,7 @@
 #include "headers/ShaderProgram.h"
 
 ShaderProgram::ShaderProgram() {
-	getShader helper{};
+	ChessHelper helper{};
 
 	GLuint vs;
 	if (!createShader(helper.getShaderCode(vertex_path), GL_VERTEX_SHADER, vs)) return;

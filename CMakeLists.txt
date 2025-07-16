@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.31 FATAL_ERROR)
 set(PROJECT_NAME Chess)
 project(${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME} src/main.cpp       "src/Helper/getShader.cpp" "src/Helper/headers/getShader.h" "src/Render/ShaderProgram.cpp" "src/Render/headers/ShaderProgram.h"  )
+add_executable(${PROJECT_NAME} src/main.cpp       "src/Helper/ChessHelper.cpp" "src/Helper/headers/ChessHelper.h" "src/Render/ShaderProgram.cpp" "src/Render/headers/ShaderProgram.h"   "src/Render/VertexArray.cpp" "src/Render/headers/VertexArray.h"   "src/Render/headers/VertexBuffer.h" "src/Render/VertexBuffer.cpp" )
 
 # GLFW
 add_subdirectory(libs/glfw)
