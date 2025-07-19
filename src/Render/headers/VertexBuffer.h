@@ -1,3 +1,5 @@
+#pragma once
+
 #include <glad/glad.h>
 
 class VertexBuffer {
@@ -7,6 +9,6 @@ public:
 	VertexBuffer();
 	~VertexBuffer();
 
-	void genBuffer(GLfloat vec);
+	void genBuffer(GLfloat* vec);
 	void bind() const;
 };

@@ -51,12 +51,9 @@ bool ShaderProgram::createShader(const std::string& source,const GLenum shaderTy
 
 void ShaderProgram::useProgram() const { glUseProgram(getProgramID()); };
 
-
-
-
-
-
-
-
 GLuint ShaderProgram::getProgramID() const { return programID; };
+
+void ShaderProgram::setInt(const std::string& name, const GLint value) {
+	glUniform1i(glGetUniformLocation(programID, name.c_str()), value);
+}
 

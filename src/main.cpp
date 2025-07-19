@@ -4,11 +4,21 @@
 #include <iostream>
 
 #include "Render/headers/ShaderProgram.h"
-#include "Render/headers/VertexArray.h"
+
+GLfloat textures[] = {
+    0.0f, 0.0f,
+    1.0f, 0.0f,
+    0.0f, 1.0f,
+
+    1.0f, 0.0f,
+    0.0f, 1.0f,
+    1.0f, 1.0f,
+};
 
 
-int g_windowSizeX = 1000;
-int g_windowSizeY = 1000;
+int g_windowSizeX = 1024;
+int g_windowSizeY = 1024;
+int squares = 8;
 
 static void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
 {
@@ -20,8 +30,7 @@ static void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
 int main(void)
 {
     /* Initialize the library */
-    if (!glfwInit())
-        return -1;
+    if (!glfwInit()) return -1;
 
     /* Create a windowed mode window and its OpenGL context */
     GLFWwindow* window = glfwCreateWindow(g_windowSizeX, g_windowSizeY, "Chess", nullptr, nullptr);
@@ -44,8 +53,10 @@ int main(void)
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
     ChessHelper helper{};
-    std::vector<ChessHelper::Vertex> points = helper.getPoints(8, g_windowSizeX);
-    std::vector<ChessHelper::Fragment> colors = helper.getColors();
+    std::vector<ChessHelper::Vertex> points = helper.getPoints(squares, g_windowSizeX);
+    std::vector<ChessHelper::Fragment> colors = helper.getColors(squares);
+
+    auto tex = helper.loadTexture("Default", "C:/Code/C++/Chess/resources/textures/фигуры.png");
 
     ShaderProgram program{};
 
@@ -59,6 +70,11 @@ int main(void)
     glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
     glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(ChessHelper::Fragment), colors.data(), GL_STATIC_DRAW);
 
+    GLuint textures_vbo = 0;
+    glGenBuffers(1, &textures_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, textures_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(textures), textures, GL_STATIC_DRAW);
+
     GLuint vao = 0;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -70,6 +86,13 @@ int main(void)
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, textures_vbo);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    program.useProgram();
+    program.setInt("tex", 0);
     
 
     /* Loop until the user closes the window */
@@ -79,6 +102,7 @@ int main(void)
 
         program.useProgram();
         glBindVertexArray(vao);
+        tex->bind();
         glDrawArrays(GL_TRIANGLES, 0, points.size());
 
         /* Swap front and back buffers */
