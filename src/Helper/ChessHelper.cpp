@@ -90,7 +90,9 @@ std::vector<ChessHelper::Fragment> ChessHelper::getColors(unsigned int squares) 
 	return colors;
 }
 
-std::shared_ptr<Texture2D> ChessHelper::loadTexture(const std::string& textureName, const std::string& path) {
+void ChessHelper::loadTexture(const std::string& path) {
+	int parts = 12;
+
 	int channels = 0;
 	int width = 0;
 	int height = 0;
@@ -100,14 +102,23 @@ std::shared_ptr<Texture2D> ChessHelper::loadTexture(const std::string& textureNa
 
 	if (!pixels) {
 		std::cerr << "Can't load texture: " << path << std::endl;
-		return nullptr;
 	}
 
-	std::shared_ptr<Texture2D> newTexture = textures.emplace(textureName, std::make_shared<Texture2D>(width, height, pixels, channels, GL_NEAREST, GL_CLAMP_TO_EDGE)).first->second;
+	std::vector<std::unique_ptr<unsigned char[]>> parts_data = sliceTexture(pixels, width, height, channels, parts);
+
+	for (int i = 0; i < parts; i++) {
+		textures.emplace(Figures::convertToString(Figures::Figures(i)), std::make_shared<Texture2D>(
+			width / parts,
+			height,
+			i,
+			parts_data[i].get(),
+			channels,
+			GL_NEAREST,
+			GL_CLAMP_TO_EDGE)
+		);
+	}
 
 	stbi_image_free(pixels);
-
-	return newTexture;
 }
 
 std::shared_ptr<Texture2D> ChessHelper::getTexture(const std::string& textureName) {
@@ -118,4 +129,32 @@ std::shared_ptr<Texture2D> ChessHelper::getTexture(const std::string& textureNam
 	}
 	std::cerr << "Can't find the texture: " << textureName << std::endl;
 	return nullptr;
+}
+
+std::vector<std::unique_ptr<unsigned char[]>> ChessHelper::sliceTexture(unsigned char* data, int width, int height, int channels, int parts) {
+	std::vector<std::unique_ptr<unsigned char[]>> parts_data;
+	int interval = width / parts;
+	int startX, startY;
+	startY = 0;
+
+	for (int i = 0; i < parts; i++) {
+		startX = i * interval;
+
+		auto part_data = std::make_unique<unsigned char[]>(static_cast<size_t>(interval) * height * channels);
+
+		for (int row = 0; row < height; row++) {
+			for (int col = 0; col < interval; col++) {
+				int src_index = ((row + startY) * width + (col + startX)) * channels;
+				int dest_index = (row * interval + col) * channels;
+
+				for (int ch = 0; ch < channels; ch++) {
+					part_data[static_cast<size_t>(dest_index) + ch] = data[src_index + ch];
+				}
+			}
+		}
+
+		parts_data.push_back(std::move(part_data));
+	}
+
+	return parts_data;
 }

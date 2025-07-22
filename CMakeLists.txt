@@ -9,13 +9,13 @@ add_executable(${PROJECT_NAME}
 				"src/Helper/headers/ChessHelper.h"
 				"src/Render/ShaderProgram.cpp"
 				"src/Render/headers/ShaderProgram.h"
-				"src/Render/VertexArray.cpp"
-				"src/Render/headers/VertexArray.h"
-				"src/Render/headers/VertexBuffer.h"
-				"src/Render/VertexBuffer.cpp"
 				"src/Helper/headers/stb_image.h"
 				"src/Render/Texture2D.cpp"
 				"src/Render/headers/Texture2D.h"
+				"src/Helper/headers/FiguresName.h"
+				"src/Helper/FiguresName.cpp"
+				"src/Render/Sprite.cpp" 
+				"src/Render/headers/Sprite.h"
 )
 
 # GLFW
@@ -25,3 +25,6 @@ target_link_libraries(${PROJECT_NAME} glfw)
 # GLAD
 add_subdirectory(libs/glad)
 target_link_libraries(${PROJECT_NAME} glad)
+
+# GLM
+include_directories(libs/glm)

@@ -1,5 +1,9 @@
 #include "headers/ShaderProgram.h"
 
+GLuint ShaderProgram::getProgramID() const { return programID; };
+
+void ShaderProgram::useProgram() const { glUseProgram(getProgramID()); };
+
 ShaderProgram::ShaderProgram() {
 	ChessHelper helper{};
 
@@ -49,11 +53,7 @@ bool ShaderProgram::createShader(const std::string& source,const GLenum shaderTy
 	return true;
 }
 
-void ShaderProgram::useProgram() const { glUseProgram(getProgramID()); };
-
-GLuint ShaderProgram::getProgramID() const { return programID; };
-
-void ShaderProgram::setInt(const std::string& name, const GLint value) {
+void ShaderProgram::setInt(const std::string& name, const GLint value) const {
 	glUniform1i(glGetUniformLocation(programID, name.c_str()), value);
 }
 

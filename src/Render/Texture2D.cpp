@@ -3,6 +3,7 @@
 Texture2D::Texture2D(
 	const GLuint width,
 	const GLuint height,
+	const GLuint slot,
 	const unsigned char* data,
 	const unsigned int channels,
 	const GLenum filter,
@@ -34,26 +35,6 @@ Texture2D::Texture2D(
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 };
-
-Texture2D& Texture2D::operator=(Texture2D&& texture2d) noexcept
-{
-	glDeleteTextures(1, &textureID);
-	textureID = texture2d.textureID;
-	texture2d.textureID = 0;
-	mode = texture2d.mode;
-	texture_width = texture2d.texture_width;
-	texture_height = texture2d.texture_height;
-	return *this;
-}
-
-Texture2D::Texture2D(Texture2D&& texture2d) noexcept
-{
-	textureID = texture2d.textureID;
-	texture2d.textureID = 0;
-	mode = texture2d.mode;
-	texture_width = texture2d.texture_width;
-	texture_height = texture2d.texture_height;
-}
 
 Texture2D::~Texture2D()
 {

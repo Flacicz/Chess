@@ -21,5 +21,5 @@ public:
 
 	void useProgram() const;
 	GLuint getProgramID() const;
-	void setInt(const std::string& name,const GLint value);
+	void setInt(const std::string& name,const GLint value) const;
 };
