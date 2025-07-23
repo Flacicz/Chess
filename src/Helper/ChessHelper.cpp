@@ -4,7 +4,10 @@
 #define STBI_ONLY_PNG
 #include "headers/stb_image.h"
 
+ChessHelper::ShaderProgramMap ChessHelper::shaders;
 ChessHelper::TextureMap ChessHelper::textures;
+ChessHelper::SpriteMap ChessHelper::sprites;
+
 
 std::string ChessHelper::getShaderCode(const char* path) {
 	std::ifstream shaderStream(path, std::ios::in);
@@ -17,6 +20,42 @@ std::string ChessHelper::getShaderCode(const char* path) {
 
 		return sstr.str();
 	}
+}
+
+std::shared_ptr<ShaderProgram> ChessHelper::loadShader(const std::string& shaderName, const std::string& vertexPath, const std::string& fragmentPath) {
+	std::string vertexShader = getShaderCode(vertexPath.c_str());
+	if (vertexShader.empty()) {
+		std::cerr << "No vertex shader!" << std::endl;
+		return nullptr;
+	}
+
+	std::string fragmentShader = getShaderCode(fragmentPath.c_str());
+	if (vertexShader.empty()) {
+		std::cerr << "No fragment shader!" << std::endl;
+		return nullptr;
+	}
+
+	std::shared_ptr<ShaderProgram> newShader = shaders.emplace(shaderName, std::make_shared<ShaderProgram>(vertexShader, fragmentShader)).first->second;
+	if (newShader->isCompiled())
+	{
+		return newShader;
+	}
+
+	std::cerr << "Can't load shader program:\n"
+		<< "Vertex: " << vertexPath << "\n"
+		<< "Fragment: " << fragmentPath << std::endl;
+
+	return nullptr;
+}
+
+std::shared_ptr<ShaderProgram> ChessHelper::getShader(const std::string& shaderName) {
+	ShaderProgramMap::const_iterator it = shaders.find(shaderName);
+	if (it != shaders.end())
+	{
+		return it->second;
+	}
+	std::cerr << "Can't find the shader program: " << shaderName << std::endl;
+	return nullptr;
 }
 
 std::vector<ChessHelper::Vertex> ChessHelper::getPoints(unsigned int squares, unsigned int width) {
@@ -157,4 +196,41 @@ std::vector<std::unique_ptr<unsigned char[]>> ChessHelper::sliceTexture(unsigned
 	}
 
 	return parts_data;
+}
+
+std::shared_ptr<Sprite> ChessHelper::loadSprite(const std::string& spriteName,
+	const std::string& textureName,
+	const std::string& shaderName,
+	const unsigned int spriteWidth,
+	const unsigned int spriteHeight)
+{
+	auto texture = getTexture(textureName);
+	if (!texture)
+	{
+		std::cerr << "Can't find the texture: " << textureName << " for the sprite: " << spriteName << std::endl;
+	}
+
+	auto shader = getShader(shaderName);
+	if (!shader)
+	{
+		std::cerr << "Can't find the shader: " << shaderName << std::endl;
+	}
+
+	std::shared_ptr<Sprite> newSprite = sprites.emplace(spriteName, std::make_shared<Sprite>(texture,
+																							 shader,
+																							 glm::vec2(0.0f, 0.0f),
+																				             glm::vec2(spriteWidth,spriteHeight)
+																						     )).first->second;
+	
+	return newSprite;
+}
+
+std::shared_ptr<Sprite> ChessHelper::getSprite(const std::string& spriteName) {
+	SpriteMap::const_iterator it = sprites.find(spriteName);
+	if (it != sprites.end())
+	{
+		return it->second;
+	}
+	std::cerr << "Can't find the sprite: " << spriteName << std::endl;
+	return nullptr;
 }

@@ -5,21 +5,23 @@
 #include <string>
 #include <iostream>
 
-#include "../../Helper/headers/chessHelper.h"
+#include <mat4x4.hpp>
+#include <gtc/type_ptr.hpp>
 
 class ShaderProgram {
 private:
-	const char* vertex_path = "C:/Code/C++/Chess/resources/shaders/vertex_shader.txt";
-	const char* fragment_path = "C:/Code/C++/Chess/resources/shaders/fragment_shader.txt";
-
 	GLuint programID;
+	bool is_compiled = false;
 
 	bool createShader(const std::string& source, const GLenum shaderType, GLuint& shaderID);
 public:
-	ShaderProgram();
+	ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader);
 	~ShaderProgram();
 
+	bool isCompiled() const { return is_compiled; }
+	GLuint ShaderProgram::getProgramID() const { return programID; };
+
 	void useProgram() const;
-	GLuint getProgramID() const;
 	void setInt(const std::string& name,const GLint value) const;
+	void setMatrix4(const std::string& name, const glm::mat4& matrix) const;
 };
