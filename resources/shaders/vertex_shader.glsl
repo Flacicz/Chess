@@ -1,11 +1,11 @@
 #version 460
 
 layout(location = 0) in vec2 vertex_position;
-layout(location = 1) in vec3 vertex_color;
+layout(location = 1) in vec2 texture_position;
 
-out vec3 color;
+out vec2 texture_coords;
 
 void main() {
-	color = vertex_color;
+	texture_coords = texture_position;
 	gl_Position = vec4(vertex_position, 0.0, 1.0);
 }

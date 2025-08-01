@@ -18,4 +18,6 @@ public:
 
 	void createShader(const std::string& path, const GLenum shaderType, GLuint& shaderID);
 	void useProgram() const;
+
+	void setInt(const std::string& name, const GLint value) const;
 };
