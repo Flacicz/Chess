@@ -33,7 +33,7 @@ void ResourceManager::loadTexture(const std::string& name, const std::string& pa
 		return;
 	}
 
-	textures.emplace(name, std::make_shared<Texture>(Texture(width, height, data, channels, GL_NEAREST, GL_CLAMP_TO_EDGE)));
+	textures.emplace(name, std::make_shared<Texture>(width, height, data, channels, GL_NEAREST, GL_CLAMP_TO_EDGE));
 
 	stbi_image_free(data);
 }

@@ -58,8 +58,10 @@ int main(void)
         std::cerr << "Can't init glad" << std::endl;
     }
 
-    ShaderProgram shaderProgram{ "C:/Code/C++/Chess/resources/shaders/vertex_shader.glsl",
-                                 "C:/Code/C++/Chess/resources/shaders/fragment_shader.glsl" };
+    glClearColor(0, 0, 0, 1);
+
+    ShaderProgram shaderProgram{ "C:/Code/C++/Chess/resources/shaders/vertex_shader.txt",
+                                 "C:/Code/C++/Chess/resources/shaders/fragment_shader.txt" };
 
     ResourceManager rm{};
 
