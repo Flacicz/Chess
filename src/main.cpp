@@ -66,7 +66,9 @@ int main(void)
     ResourceManager rm{};
 
     rm.loadTexture("ChessDesk", "C:/Code/C++/Chess/resources/textures/ChessDesk.png");
+    rm.loadFiguresTexture("C:/Code/C++/Chess/resources/textures/Figures.png");
     auto& desk = rm.getTexture("ChessDesk");
+    auto& figure = rm.getTexture("BlackQueen");
     
     GLuint points_vbo = 0;
     glGenBuffers(1, &points_vbo);
