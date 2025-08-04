@@ -4,7 +4,9 @@
 #define STBI_ONLY_PNG
 #include "./headers/stb_image.h"
 
+ResourceManager::ShaderProgramMap ResourceManager::shaderPrograms;
 ResourceManager::TextureMap ResourceManager::textures;
+ResourceManager::SpriteMap ResourceManager::sprites;
 
 std::string ResourceManager::readShaderCode(const std::string& path) {
 	std::ifstream in(path, std::ios::in);
@@ -18,6 +20,28 @@ std::string ResourceManager::readShaderCode(const std::string& path) {
 	buffer << in.rdbuf();
 
 	return buffer.str();
+}
+
+std::shared_ptr<ShaderProgram> ResourceManager::loadShaderProgram(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath) {
+	std::string vertexShaderCode = readShaderCode(vertexPath);
+	if (vertexShaderCode.empty()) std::cerr << "Can't read vertex shader" << std::endl;
+
+	std::string fragmentShaderCode = readShaderCode(fragmentPath);
+	if (fragmentShaderCode.empty()) std::cerr << "Can't read fragment shader" << std::endl;
+
+	std::shared_ptr<ShaderProgram> shaderProgram = shaderPrograms.emplace(name, std::make_shared<ShaderProgram>(vertexShaderCode, fragmentShaderCode)).first->second;
+
+	return shaderProgram;
+}
+
+std::shared_ptr<ShaderProgram> ResourceManager::getShaderProgram(const std::string& name) {
+	ShaderProgramMap::const_iterator it = shaderPrograms.find(name);
+	if (it != shaderPrograms.end())
+	{
+		return it->second;
+	}
+	std::cerr << "Can't find the texture: " << name << std::endl;
+	return nullptr;
 }
 
 void ResourceManager::loadTexture(const std::string& name, const std::string& path) {
@@ -79,5 +103,35 @@ std::shared_ptr<Texture> ResourceManager::getTexture(const std::string& name) {
 		return it->second;
 	}
 	std::cerr << "Can't find the texture: " << name << std::endl;
+	return nullptr;
+}
+
+std::shared_ptr<Sprite> ResourceManager::loadSprite(const std::string& spriteName,
+	const std::string& textureName,
+	const std::string& shaderProgramName,
+	const unsigned int spriteWidth,
+	const unsigned int spriteHeight)
+{
+	auto& texture = getTexture(textureName);
+	if (!texture) std::cerr << "Can't find texture: " << textureName << std::endl;
+
+	auto& shaderProgram = getShaderProgram(shaderProgramName);
+	if (!shaderProgram) std::cerr << "Can't find texture: " << shaderProgramName << std::endl;
+
+	std::shared_ptr<Sprite> newSprite = sprites.emplace(textureName, std::make_shared<Sprite>(shaderProgram,
+																							  texture,
+																							  glm::vec2(0.f, 0.f),
+																							  glm::vec2(spriteWidth, spriteHeight))).first->second;
+
+	return newSprite;
+}
+
+std::shared_ptr<Sprite> ResourceManager::getSprite(const std::string& name) {
+	SpriteMap::const_iterator it = sprites.find(name);
+	if (it != sprites.end())
+	{
+		return it->second;
+	}
+	std::cerr << "Can't find the sprite: " << name << std::endl;
 	return nullptr;
 }

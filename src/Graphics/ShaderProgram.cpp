@@ -1,11 +1,11 @@
 #include "headers/ShaderProgram.h"
 
-ShaderProgram::ShaderProgram(const std::string& vertexShaderPath, const std::string& fragmentShaderPath) {
+ShaderProgram::ShaderProgram(const std::string& vertexShaderCode, const std::string& fragmentShaderCode) {
 	GLuint vertexShader = 0;
-	this->createShader(rm.readShaderCode(vertexShaderPath), GL_VERTEX_SHADER, vertexShader);
+	this->createShader(vertexShaderCode.c_str(), GL_VERTEX_SHADER, vertexShader);
 
 	GLuint fragmentShader = 0;
-	this->createShader(rm.readShaderCode(fragmentShaderPath), GL_FRAGMENT_SHADER, fragmentShader);
+	this->createShader(fragmentShaderCode.c_str(), GL_FRAGMENT_SHADER, fragmentShader);
 
 	programID = glCreateProgram();
 	glAttachShader(programID, vertexShader);
@@ -50,4 +50,8 @@ void ShaderProgram::useProgram() const {
 
 void ShaderProgram::setInt(const std::string& name, const GLint value) const {
 	glUniform1i(glGetUniformLocation(programID, name.c_str()), value);
+}
+
+void ShaderProgram::setMatrix4(const std::string& name, const glm::mat4& value) const {
+	glUniformMatrix4fv(glGetUniformLocation(programID, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 }

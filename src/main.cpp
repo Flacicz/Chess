@@ -4,6 +4,8 @@
 #include <iostream>
 
 #include "Graphics/headers/ShaderProgram.h"
+#include "Resources/headers/ResourceManager.h"
+
 #include <glm/glm.hpp>
 
 static glm::ivec2 windowSize(1000, 1000);
@@ -60,15 +62,19 @@ int main(void)
 
     glClearColor(0, 0, 0, 1);
 
-    ShaderProgram shaderProgram{ "C:/Code/C++/Chess/resources/shaders/vertex_shader.txt",
-                                 "C:/Code/C++/Chess/resources/shaders/fragment_shader.txt" };
-
     ResourceManager rm{};
+
+    auto& shaderProgram = rm.loadShaderProgram("Default", "C:/Code/C++/Chess/resources/shaders/vertex_shader.txt",
+                                                          "C:/Code/C++/Chess/resources/shaders/fragment_shader.txt");
 
     rm.loadTexture("ChessDesk", "C:/Code/C++/Chess/resources/textures/ChessDesk.png");
     rm.loadFiguresTexture("C:/Code/C++/Chess/resources/textures/Figures.png");
-    auto& desk = rm.getTexture("ChessDesk");
-    auto& figure = rm.getTexture("BlackQueen");
+    
+    auto& desk = rm.loadSprite("Desk", "ChessDesk", "Default", 1000, 1000);
+    desk->setPosition(glm::vec2(0, 0));
+
+    auto& sprite = rm.loadSprite("NewSprite", "BlackQueen", "Default", 125, 125);
+    sprite->setPosition(glm::vec2(125, 250));
     
     GLuint points_vbo = 0;
     glGenBuffers(1, &points_vbo);
@@ -92,8 +98,9 @@ int main(void)
     glBindBuffer(GL_ARRAY_BUFFER, texture_vbo);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), nullptr);
 
-    shaderProgram.useProgram();
-    shaderProgram.setInt("tex", 0);
+    glm::mat4 projectionMatrix = glm::ortho(0.f, static_cast<float>(windowSize.x), 0.f, static_cast<float>(windowSize.y), -100.f, 100.f);
+
+    shaderProgram->setMatrix4("projectionMat", projectionMatrix);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -101,10 +108,11 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        shaderProgram.useProgram();
         glBindVertexArray(vertexArray);
-        desk->bind();
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        desk->render();
+
+        sprite->render();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
