@@ -61,41 +61,6 @@ void ResourceManager::loadTexture(const std::string& name, const std::string& pa
 	stbi_image_free(data);
 }
 
-void ResourceManager::loadFiguresTexture(const std::string& path) {
-	std::vector<std::unique_ptr<unsigned char[]>> parts;
-	int figures = 12;
-
-	int channels = 0;
-	int width = 0;
-	int height = 0;
-
-	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
-
-	if (!data) {
-		std::cerr << "Can't load texture: " << path << std::endl;
-		return;
-	}
-
-	int part_width = width / figures;
-	for (int i = 0; i < figures; i++) {
-		auto part = std::make_unique<unsigned char[]>(static_cast<size_t>(part_width) * height * channels);
-
-		for (int row = 0; row < height; row++) {
-			for (int col = 0; col < part_width; col++) {
-				int src_index = ((i * part_width + col) + (row * part_width)) * channels;
-				int dest_index = (col + row * part_width) * channels;
-
-				for (int ch = 0; ch < channels; ch++) {
-					part[static_cast<size_t>(dest_index) + ch] = data[src_index + ch];
-				}
-			}
-		}
-
-		textures.emplace(Figures::convertToString(Figures::Figures(i)), std::make_shared<Texture>(part_width, height, part.get(), channels, GL_NEAREST, GL_CLAMP_TO_EDGE));
-	}
-}
-
 std::shared_ptr<Texture> ResourceManager::getTexture(const std::string& name) {
 	TextureMap::const_iterator it = textures.find(name);
 	if (it != textures.end())
@@ -110,7 +75,8 @@ std::shared_ptr<Sprite> ResourceManager::loadSprite(const std::string& spriteNam
 	const std::string& textureName,
 	const std::string& shaderProgramName,
 	const unsigned int spriteWidth,
-	const unsigned int spriteHeight)
+	const unsigned int spriteHeight,
+	const std::string& subTextureName)
 {
 	auto& texture = getTexture(textureName);
 	if (!texture) std::cerr << "Can't find texture: " << textureName << std::endl;
@@ -118,10 +84,11 @@ std::shared_ptr<Sprite> ResourceManager::loadSprite(const std::string& spriteNam
 	auto& shaderProgram = getShaderProgram(shaderProgramName);
 	if (!shaderProgram) std::cerr << "Can't find texture: " << shaderProgramName << std::endl;
 
-	std::shared_ptr<Sprite> newSprite = sprites.emplace(textureName, std::make_shared<Sprite>(shaderProgram,
-																							  texture,
-																							  glm::vec2(0.f, 0.f),
-																							  glm::vec2(spriteWidth, spriteHeight))).first->second;
+	std::shared_ptr<Sprite> newSprite = sprites.emplace(spriteName, std::make_shared<Sprite>(shaderProgram,
+																							 subTextureName,
+																							 texture,
+																							 glm::vec2(spriteWidth, spriteHeight),
+																							 glm::vec2(0.f, 0.f))).first->second;
 
 	return newSprite;
 }
@@ -134,4 +101,25 @@ std::shared_ptr<Sprite> ResourceManager::getSprite(const std::string& name) {
 	}
 	std::cerr << "Can't find the sprite: " << name << std::endl;
 	return nullptr;
+}
+
+std::shared_ptr<Texture> ResourceManager::loadTextureAtlas(const std::string& textureName,
+														   const std::string& texturePath)
+{
+	auto texture = getTexture(textureName);
+	if (texture) {
+		unsigned int figuresCount = 15;
+		unsigned int textureWidth = texture->getWidth();
+		unsigned int textureHeight = texture->getHeight();
+
+		float offsetX = (static_cast<float>(textureWidth) / figuresCount) / textureWidth;
+
+		for (int i = 0; i < figuresCount; ++i) {
+			glm::vec2 leftBottomUV(offsetX * i, 0.0f);
+			glm::vec2 rightTopUV(offsetX * i + offsetX, 1.0f);
+			texture->addSubTexture(Figures::convertToString(Figures::Figures(i)), leftBottomUV, rightTopUV);
+		}
+	}
+
+	return texture;
 }

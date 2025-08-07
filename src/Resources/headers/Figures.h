@@ -4,19 +4,24 @@
 
 namespace Figures {
 	enum class Figures {
-		BlackQueen,
-		WhiteQueen,
-		BlackKing,
-		WhiteKing,
-		BlackElephant,
-		WhiteElephant,
-		BlackRook,
-		WhiteRook,
-		BlackHorse,
-		WhiteHorse,
 		BlackPawn,
-		WhitePawn
+		BlackHorse,
+		BlackElephant,
+		BlackRook,
+		BlackKing,
+		BlackQueen,
+		WhitePawn,
+		WhiteHorse,
+		WhiteElephant,
+		WhiteRook,
+		WhiteKing,
+		WhiteQueen,
+		Click,
+		Hand,
+		Fist,
+		None,
 	};
 
 	std::string convertToString(Figures Figure);
+	Figures convertToString(const std::string& figure);
 }

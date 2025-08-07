@@ -20,8 +20,9 @@ private:
 	GLuint vertexArray = 0;
 public:
 	Sprite(
-		const std::shared_ptr<ShaderProgram> shaderProgram,
-		const std::shared_ptr<Texture> texture,
+		std::shared_ptr<ShaderProgram> shaderProgram,
+		const std::string& subTetxureName,
+		std::shared_ptr<Texture> texture,
 		const glm::vec2& size = glm::vec2(1.0f),
 		const glm::vec2& position = glm::vec2(0.0f)
 	);

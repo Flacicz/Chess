@@ -19,15 +19,18 @@ public:
 	std::shared_ptr<ShaderProgram> getShaderProgram(const std::string& name);
 
 	void loadTexture(const std::string& name, const std::string& path);
-	void loadFiguresTexture(const std::string& path);
 	std::shared_ptr<Texture> getTexture(const std::string& name);
 
 	std::shared_ptr<Sprite> loadSprite(const std::string& spriteName,
 		const std::string& textureName,
 		const std::string& shaderProgramName,
 		const unsigned int spriteWidth,
-		const unsigned int spriteHeight);
+		const unsigned int spriteHeight,
+		const std::string& subTextureName);
 	std::shared_ptr<Sprite> getSprite(const std::string& name);
+
+	std::shared_ptr<Texture> loadTextureAtlas(const std::string& textureName,
+											  const std::string& texturePath);
 private:
 	typedef std::map<const std::string, std::shared_ptr<ShaderProgram>> ShaderProgramMap;
 	static ShaderProgramMap shaderPrograms;

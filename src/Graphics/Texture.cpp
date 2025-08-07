@@ -44,3 +44,17 @@ void Texture::bind() const
 {
 	glBindTexture(GL_TEXTURE_2D, textureID);
 }
+
+void Texture::addSubTexture(const std::string& name, const glm::vec2& leftBottom, const glm::vec2& rightTop) {
+	subTextures.emplace(name, SubTexture(leftBottom, rightTop));
+}
+
+const Texture::SubTexture& Texture::getSubTexture(const std::string& name) const {
+	auto it = subTextures.find(name);
+	if (it != subTextures.end())
+	{
+		return it->second;
+	}
+	const static SubTexture default;
+	return default;
+}
