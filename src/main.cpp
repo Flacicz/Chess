@@ -6,16 +6,23 @@
 #include "Graphics/headers/ShaderProgram.h"
 #include "Resources/headers/ResourceManager.h"
 #include "Game/headers/Game.h"
+#include "Logic/headers/Logic.h"
 
 #include <glm/glm.hpp>
 
 static glm::ivec2 windowSize(1420, 1080);
 
-static void glfwWindowSizeCallback(GLFWwindow* pWindow, int width, int height)
+static void glfwWindowSizeCallback(GLFWwindow* window, int width, int height)
 {
     windowSize.x = width;
     windowSize.y = height;
     glViewport(0, 0, windowSize.x, windowSize.y);
+}
+
+static void glfwMouseClickCallback(GLFWwindow* window, int button, int action, int mods) {
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        Logic::getInstance().onWhichFigureIsMouse();
+    }
 }
 
 int main(void)
@@ -29,7 +36,13 @@ int main(void)
         return -1;
     }
 
+    Game::createInstance(windowSize);
+    auto& game = Game::getInstance();
+
+    Logic::createInstance(window);
+
     glfwSetWindowSizeCallback(window, glfwWindowSizeCallback);
+    glfwSetMouseButtonCallback(window, glfwMouseClickCallback);
 
     glfwMakeContextCurrent(window);
 
@@ -43,7 +56,10 @@ int main(void)
 
     glClearColor(0, 0, 0, 1);
 
-    Game game{ windowSize };
+    
+
+
+
 
     game.init();
 
@@ -53,7 +69,7 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        game.render();
+        Game::getInstance().render();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

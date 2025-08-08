@@ -31,4 +31,5 @@ public:
 	void render() const;
 	void setSize(const glm::vec2& size);
 	void setPosition(const glm::vec2& position);
+	glm::vec2 getCurrentPosition() const { return position; };
 };

@@ -1,10 +1,17 @@
 #include "headers/Game.h"
 
-Game::Game(const glm::vec2& windowSize) : windowSize(windowSize), figureSize(160,120) {}
+std::unique_ptr<Game> Game::instance = nullptr;
 
-Game::~Game() {}
+Game::Game(const glm::vec2& windowSize) : windowSize(windowSize), figureSize(160,120) {
+	state.resize(8);
+	for (auto& row : state) {
+		row.resize(8);
+	}
+}
 
 void Game::init() {
+	auto& rm = ResourceManager::getInstance();
+
 	shaderProgram = rm.loadShaderProgram("Default", "C:/Code/C++/Chess/resources/shaders/vertex_shader.txt",
 												    "C:/Code/C++/Chess/resources/shaders/fragment_shader.txt");
 
@@ -12,6 +19,17 @@ void Game::init() {
 	rm.loadTexture("DefaultTextureAtlas", "C:/Code/C++/Chess/resources/textures/spritesheet.png");
 	rm.loadTextureAtlas("DefaultTextureAtlas", "C:/Code/C++/Chess/resources/textures/spritesheet.png");
 
+	this->initFigures();
+
+	shaderProgram->useProgram();
+	shaderProgram->setInt("tex", 0);
+
+	glm::mat4 projectionMatrix = glm::ortho(0.f, static_cast<float>(windowSize.x), 0.f, static_cast<float>(windowSize.y), -100.f, 100.f);
+
+	shaderProgram->setMatrix4("projectionMat", projectionMatrix);
+}
+
+void Game::initFigures() {
 	glm::vec2 startPos(70, 900);
 	std::vector<std::string> names;
 	std::ifstream in("C:/Code/C++/Chess/resources/desk.txt", std::ios::in);
@@ -19,7 +37,7 @@ void Game::init() {
 		std::string line;
 		while (std::getline(in, line)) {
 			for (int i = 0; i < line.length();) {
-				size_t index = line.find_first_of(" ");
+				int index = line.find_first_of(" ");
 
 				std::string substr = line.substr(i, index - i);
 
@@ -30,7 +48,7 @@ void Game::init() {
 				i += (index - i) + 1;
 
 				names.push_back(substr);
-				if (substr != "None") rm.loadSprite(substr, "DefaultTextureAtlas", "Default", figureSize.x, figureSize.y, subTexture);
+				if (substr != "None") ResourceManager::getInstance().loadSprite(substr, "DefaultTextureAtlas", "Default", figureSize.x, figureSize.y, subTexture);
 			}
 		}
 		in.close();
@@ -43,7 +61,7 @@ void Game::init() {
 		for (int j = 0; j < 8; j++) {
 			state[i][j] = names[8 * i + j];
 			if (state[i][j] != "None") {
-				auto& sprite = rm.getSprite(names[i * 8 + j]);
+				auto& sprite = ResourceManager::getInstance().getSprite(names[i * 8 + j]);
 				sprite->setPosition(startPos);
 			}
 
@@ -53,25 +71,19 @@ void Game::init() {
 		startPos.x = 70;
 		startPos.y -= 120;
 	}
-
-	shaderProgram->useProgram();
-	shaderProgram->setInt("tex", 0);
-
-	glm::mat4 projectionMatrix = glm::ortho(0.f, static_cast<float>(windowSize.x), 0.f, static_cast<float>(windowSize.y), -100.f, 100.f);
-
-	shaderProgram->setMatrix4("projectionMat", projectionMatrix);
 }
 
 void Game::render() {
-	auto& desk = rm.loadSprite("Desk", "ChessDesk", "Default", windowSize.x, windowSize.y, "Desk");
+	auto& desk = ResourceManager::getInstance().loadSprite("Desk", "ChessDesk", "Default", windowSize.x, windowSize.y, "Desk");
 	desk->render();
 
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (state[i][j] != "None") {
-				auto& sprite = rm.getSprite(state[i][j]);
+				auto& sprite = ResourceManager::getInstance().getSprite(state[i][j]);
 				sprite->render();
 			}
 		}
 	}
 }
+

@@ -13,6 +13,11 @@
 
 class ResourceManager {
 public:
+	static ResourceManager& getInstance() {
+		static ResourceManager instance;
+		return instance;
+	}
+
 	std::string readShaderCode(const std::string& path);
 
 	std::shared_ptr<ShaderProgram> loadShaderProgram(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath);
@@ -32,6 +37,10 @@ public:
 	std::shared_ptr<Texture> loadTextureAtlas(const std::string& textureName,
 											  const std::string& texturePath);
 private:
+	ResourceManager() {};
+	ResourceManager(const ResourceManager&) = delete;
+	ResourceManager& operator=(const ResourceManager&) = delete;
+
 	typedef std::map<const std::string, std::shared_ptr<ShaderProgram>> ShaderProgramMap;
 	static ShaderProgramMap shaderPrograms;
 
