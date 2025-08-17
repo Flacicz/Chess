@@ -33,5 +33,5 @@ public:
 	glm::vec2 getMouseClickPos();
 	std::string findFigureByPosition(int x, int y) const;
 	bool isCursorInSquare(const glm::vec2& currentPos, const glm::vec2& leftBottom, const glm::vec2& rightTop);
-	void onWhichFigureIsMouse();
+	std::shared_ptr<Sprite> onWhichFigureIsMouse();
 };

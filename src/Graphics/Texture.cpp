@@ -49,7 +49,7 @@ void Texture::addSubTexture(const std::string& name, const glm::vec2& leftBottom
 	subTextures.emplace(name, SubTexture(leftBottom, rightTop));
 }
 
-const Texture::SubTexture& Texture::getSubTexture(const std::string& name) const {
+const Texture::SubTexture& Texture::getSubTexture(const std::string& name) {
 	auto it = subTextures.find(name);
 	if (it != subTextures.end())
 	{

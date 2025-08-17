@@ -33,7 +33,7 @@ public:
 	void bind() const;
 
 	void addSubTexture(const std::string& name, const glm::vec2& leftBottom, const glm::vec2& rightTop);
-	const SubTexture& getSubTexture(const std::string& name) const;
+	const SubTexture& getSubTexture(const std::string& name);
 private:
 	GLuint textureID;
 	

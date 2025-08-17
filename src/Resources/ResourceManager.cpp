@@ -72,11 +72,11 @@ std::shared_ptr<Texture> ResourceManager::getTexture(const std::string& name) {
 }
 
 std::shared_ptr<Sprite> ResourceManager::loadSprite(const std::string& spriteName,
-	const std::string& textureName,
-	const std::string& shaderProgramName,
-	const unsigned int spriteWidth,
-	const unsigned int spriteHeight,
-	const std::string& subTextureName)
+													const std::string& textureName,
+													const std::string& shaderProgramName,
+													const unsigned int spriteWidth,
+													const unsigned int spriteHeight,
+													const std::string& subTextureName)
 {
 	auto& texture = getTexture(textureName);
 	if (!texture) std::cerr << "Can't find texture: " << textureName << std::endl;
@@ -103,21 +103,27 @@ std::shared_ptr<Sprite> ResourceManager::getSprite(const std::string& name) {
 	return nullptr;
 }
 
-std::shared_ptr<Texture> ResourceManager::loadTextureAtlas(const std::string& textureName,
-														   const std::string& texturePath)
+std::shared_ptr<Texture> ResourceManager::loadTextureAtlas(const std::string& textureName)
 {
 	auto texture = getTexture(textureName);
+
+	static std::vector<std::string> figures = {
+		"BlackPawn", "BlackKnight", "BlackRook", "BlackBishop", "BlackQueen", "BlackKing",
+		"WhitePawn", "WhiteKnight", "WhiteRook", "WhiteBishop", "WhiteQueen", "WhiteKing"
+	};
+
 	if (texture) {
-		unsigned int figuresCount = 15;
+		int figuresCount = 12;
+
 		unsigned int textureWidth = texture->getWidth();
 		unsigned int textureHeight = texture->getHeight();
 
 		float offsetX = (static_cast<float>(textureWidth) / figuresCount) / textureWidth;
 
-		for (int i = 0; i < figuresCount; ++i) {
+		for (int i = 0; i < figuresCount; i++) {
 			glm::vec2 leftBottomUV(offsetX * i, 0.0f);
 			glm::vec2 rightTopUV(offsetX * i + offsetX, 1.0f);
-			texture->addSubTexture(Figures::convertToString(Figures::Figures(i)), leftBottomUV, rightTopUV);
+			texture->addSubTexture(figures[i], leftBottomUV, rightTopUV);
 		}
 	}
 

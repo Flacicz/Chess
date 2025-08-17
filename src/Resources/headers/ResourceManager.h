@@ -9,7 +9,7 @@
 
 #include "../../Graphics/headers/Texture.h"
 #include "../../Graphics/headers/Sprite.h"
-#include "Figures.h"
+#include "../../ChessEngine/headers/ChessEngine.h"
 
 class ResourceManager {
 public:
@@ -34,8 +34,7 @@ public:
 		const std::string& subTextureName);
 	std::shared_ptr<Sprite> getSprite(const std::string& name);
 
-	std::shared_ptr<Texture> loadTextureAtlas(const std::string& textureName,
-											  const std::string& texturePath);
+	std::shared_ptr<Texture> loadTextureAtlas(const std::string& textureName);
 private:
 	ResourceManager() {};
 	ResourceManager(const ResourceManager&) = delete;

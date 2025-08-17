@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.31)
 set(PROJECT_NAME Chess)
 project(${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME} src/main.cpp "src/Resources/headers/ResourceManager.h" "src/Resources/ResourceManager.cpp" "src/Graphics/headers/ShaderProgram.h" "src/Graphics/ShaderProgram.cpp" "src/Graphics/Texture.cpp" "src/Graphics/headers/Texture.h" "src/Resources/Figures.cpp" "src/Resources/headers/Figures.h" "src/Graphics/headers/Sprite.h" "src/Graphics/Sprite.cpp" "src/Game/Game.cpp" "src/Game/headers/Game.h" "src/Logic/Logic.cpp" "src/Logic/headers/Logic.h")
+add_executable(${PROJECT_NAME} src/main.cpp "src/Resources/headers/ResourceManager.h" "src/Resources/ResourceManager.cpp" "src/Graphics/headers/ShaderProgram.h" "src/Graphics/ShaderProgram.cpp" "src/Graphics/Texture.cpp" "src/Graphics/headers/Texture.h"  "src/ChessEngine/headers/Pieces.h" "src/Graphics/headers/Sprite.h" "src/Graphics/Sprite.cpp" "src/Game/Game.cpp" "src/Game/headers/Game.h" "src/Logic/Logic.cpp" "src/Logic/headers/Logic.h"  "src/ChessEngine/headers/Bitboard.h" "src/ChessEngine/ChessEngine.cpp" "src/ChessEngine/headers/ChessEngine.h" "src/ChessEngine/Pieces.cpp" "src/ChessEngine/headers/Pieces.h" "src/ChessEngine/Bitboard.cpp")
 
 # GLFW
 add_subdirectory(libs/glfw)

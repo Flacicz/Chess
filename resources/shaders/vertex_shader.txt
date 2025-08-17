@@ -5,7 +5,6 @@ layout(location = 1) in vec2 texture_position;
 
 out vec2 texture_coords;
 
-uniform float layer;
 uniform mat4 modelMat;
 uniform mat4 projectionMat;
 

@@ -10,6 +10,10 @@
 
 #include <glm/glm.hpp>
 
+#include "ChessEngine/headers/ChessEngine.h"
+
+// startX = 70, startY = 60; TileSize = 160 : 120
+
 static glm::ivec2 windowSize(1420, 1080);
 
 static void glfwWindowSizeCallback(GLFWwindow* window, int width, int height)
@@ -36,6 +40,8 @@ int main(void)
         return -1;
     }
 
+    auto& engine = ChessEngine::getInstance();
+
     Game::createInstance(windowSize);
     auto& game = Game::getInstance();
 
@@ -56,12 +62,9 @@ int main(void)
 
     glClearColor(0, 0, 0, 1);
 
-    
-
-
-
-
     game.init();
+
+    engine.initPieces();
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -69,7 +72,7 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        Game::getInstance().render();
+        engine.render();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

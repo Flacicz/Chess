@@ -1,8 +1,0 @@
-BlackElephant1 BlackHorse1 BlackRook1 BlackKing BlackQueen BlackRook2 BlackHorse2 BlackElephant2 
-BlackPawn1 BlackPawn2 BlackPawn3 BlackPawn4 BlackPawn5 BlackPawn6 BlackPawn7 BlackPawn8 
-None None None None None None None None 
-None None None None None None None None 
-None None None None None None None None 
-None None None None None None None None 
-WhitePawn1 WhitePawn2 WhitePawn3 WhitePawn4 WhitePawn5 WhitePawn6 WhitePawn7 WhitePawn8 
-WhiteElephant1 WhiteHorse1 WhiteRook1 WhiteKing WhiteQueen WhiteRook2 WhiteHorse2 WhiteElephant2 

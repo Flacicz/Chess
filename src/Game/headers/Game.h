@@ -21,11 +21,7 @@ public:
 		return *instance;
 	}
 
-	std::vector<std::vector<std::string>> getState() const { return state; };
-
 	void init();
-	void initFigures();
-	void render();
 private:
 	Game(const Game&) = delete;
 	Game& operator=(const Game&) = delete;
@@ -34,7 +30,4 @@ private:
 	std::shared_ptr<ShaderProgram> shaderProgram;
 
 	glm::vec2 windowSize;
-	glm::vec2 figureSize;
-
-	std::vector<std::vector<std::string>> state;
 };

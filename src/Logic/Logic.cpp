@@ -16,11 +16,11 @@ bool Logic::isCursorInSquare(const glm::vec2& currentPos, const glm::vec2& leftB
 	return false;
 }
 
-std::string Logic::findFigureByPosition(int x, int y) const {
-	return Game::getInstance().getState()[x][y];
-}
+//std::string Logic::findFigureByPosition(int x, int y) const {
+//	return Game::getInstance().getState()[x][y];
+//}
 
-void Logic::onWhichFigureIsMouse() {
+std::shared_ptr<Sprite> Logic::onWhichFigureIsMouse() {
 	glm::vec2 currentPos = getMouseClickPos();
 
 	glm::vec2 leftBottomStart(70, 180);
@@ -29,12 +29,10 @@ void Logic::onWhichFigureIsMouse() {
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (isCursorInSquare(currentPos, leftBottomStart, rightTopStart)) {
-				std::string figure = findFigureByPosition(i, j);
-				if (figure != "None") {
-					auto& sprite = ResourceManager::getInstance().getSprite(figure);
-
-					sprite->setPosition(glm::vec2(500, 500));
-				}
+				//std::string figure = findFigureByPosition(i, j);
+				/*if (figure != "None") {
+					return ResourceManager::getInstance().getSprite(figure);
+				}*/
 			}
 
 			leftBottomStart.x += 160;
@@ -47,6 +45,8 @@ void Logic::onWhichFigureIsMouse() {
 		leftBottomStart.y += 120;
 		rightTopStart.y += 120;
 	}
+
+	return nullptr;
 }
 
 
